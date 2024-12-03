@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 const Login = () => {
   return (
     <div className='flex flex-col mx-auto min-w-96 items-center justify-center'>
@@ -21,9 +21,9 @@ const Login = () => {
                     </label>
                     <input type="text" placeholder='Enter your password' className='w-full input input-bordered h-10'/>
                 </div>
-                <a href="#" className='mt-2 inline-block hover:underline hover:text-blue-600 text-sm'>
+                <Link to="/sign-up" href="#" className='mt-2 inline-block hover:underline hover:text-blue-600 text-sm'>
                     {"Don't "} have an account? 
-                </a>
+                </Link>
                 <button className='btn btn-block btn-sm mt-2'>Login</button>
             </form>
         </div>
