@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Checkbox from './checkbox'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import axios from 'axios';
+import { AuthContext, useAuthContext } from '../../context/AuthContext';
 const SignUp = () =>  {
     const [inputs,setInputs]=useState({
         fullName:"",
@@ -12,6 +13,7 @@ const SignUp = () =>  {
         gender:"",
         email:""
     })
+    const {authUser,setAuthUser}=useAuthContext()
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!inputs.fullName || !inputs.username || !inputs.password || !inputs.confirmPassword || !inputs.gender || !inputs.email) {
@@ -31,6 +33,8 @@ const SignUp = () =>  {
             });
             if (data.success) {
                 toast.success("User registered successfully!");
+                localStorage.setItem('chat-user', JSON.stringify(data)); // Save to localStorage
+                setAuthUser(data); // Update the authUser state
             } else {
                 toast.error(data.message || "An error occurred");
             }
@@ -38,6 +42,7 @@ const SignUp = () =>  {
             const errorMessage = error.response?.data?.error || "Something went wrong. Please try again.";
             toast.error(errorMessage);
         }
+        
     };
     
     const handleCheckboxChange=(gender)=>{
