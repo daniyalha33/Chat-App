@@ -1,6 +1,6 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useAuthContext } from '../../context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 
 const useLogin = () => {
     const { setAuthUser } = useAuthContext();
@@ -15,7 +15,7 @@ const useLogin = () => {
 
             // Check if login was successful
             if (data.success) {
-                localStorage.setItem('chat-user', JSON.stringify(data));
+                localStorage.setItem('token', JSON.stringify(data.token));
                 setAuthUser(data);
             } else {
                 // Show backend error message in toast

@@ -1,6 +1,6 @@
 import React from 'react'
 import { SlLogout } from "react-icons/sl";
-import useLogout from '../../pages/signup/useLogout';
+import useLogout from '../../hooks/useLogout';
 
 const LogoutButton = () => {
   const {logout}=useLogout();

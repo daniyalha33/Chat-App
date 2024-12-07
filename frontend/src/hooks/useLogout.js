@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { useAuthContext } from '../../context/AuthContext'
+import { useAuthContext } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 
 
@@ -14,7 +14,7 @@ const useLogout = () => {
                     "Content-Type": "application/json",
                 },})
                 if(data.success){
-                    localStorage.removeItem("chat-user")
+                    localStorage.removeItem("token")
                     setAuthUser(null);
                 }
         } catch (error) {

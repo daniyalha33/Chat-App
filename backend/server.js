@@ -20,16 +20,25 @@ app.use(cookieParser());
 // Apply CORS middleware globally
 app.use(
     cors({
-        origin: 'http://localhost:5173', // Frontend origin
-        methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-        credentials: true, // Allow credentials (cookies, etc.)
+        origin: 'http://localhost:5173', // Your React app's URL
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true, // Allow cookies and credentials
     })
 );
+
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
+app.get("/test-cookie", (req, res) => {
+    res.cookie("testCookie", "testValue", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: false, // Set to true in production
+    });
+    res.status(200).json({ message: "Cookie set" });
+});
 
 // Test route
 app.get("/", (req, res) => {

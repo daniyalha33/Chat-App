@@ -66,10 +66,10 @@ export const signup = async (req, res) => {
         }
 
         // Optionally generate a token and set a cookie
-        generateTokenAndSetCookie(newUser, res);
+        const token=generateTokenAndSetCookie(newUser._id);
 
         // Send success response
-        res.status(201).json({success:true,id:newUser._id,fullName:newUser.fullName,username:newUser.username,profilePic:newUser.profilePic});
+        res.status(201).json({success:true,token,id:newUser._id,fullName:newUser.fullName,username:newUser.username,profilePic:newUser.profilePic});
     } catch (error) {
         console.error("Error during signup:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -98,11 +98,12 @@ export const login = async (req, res) => {
         }
 
         // Generate token and set cookie
-        generateTokenAndSetCookie(user, res);
+        const token=generateTokenAndSetCookie(user._id);
 
         // Return user data in the response
         res.status(200).json({
             success: true,
+            token,
             message: "Login successful",
             id: user._id,
             fullName: user.fullName,
@@ -118,19 +119,12 @@ export const login = async (req, res) => {
 
 
 
-export const logout = async (req, res) => {
-    try {
-        res.cookie("jwt", "", { maxAge: 0 });
-        res.status(200).json({success:true, message: "Logout successful" });
-    } catch (error) {
-        console.error("Error during logout:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-};
+
 
 export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedInUserId = req.user._id;
+        console.log(loggedInUserId)
 
         // Validate logged-in user
         if (!loggedInUserId) {
@@ -143,7 +137,7 @@ export const getUsersForSidebar = async (req, res) => {
             return res.status(404).json({ error: "No other users found" });
         }
 
-        res.status(200).json(filteredUsers);
+        res.status(200).json({success:true,filteredUsers});
     } catch (error) {
         console.error("Error fetching users for sidebar:", error);
         res.status(500).json({ error: "Internal server error" });
