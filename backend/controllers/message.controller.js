@@ -40,19 +40,30 @@ console.log("Receiver ID:", receiverId);
         
     }
 }
-export const getMessage=async(req,res)=>{
+export const getMessage = async (req, res) => {
     try {
-        const {id:userToChatId}=req.params;
-        const senderId=req.user._id;
-        const conversation=await Conversation.findOne({
-            participants:{$all:[senderId,userToChatId]}
-        }).populate("message");
-        if(!conversation){
-            return res.status(200).json([]);
+        const { id: userToChatId } = req.params;
+        const senderId = req.user._id;
+
+        // Validate required fields
+        if (!userToChatId) {
+            return res.status(400).json({ success: false, message: "Receiver ID is required" });
         }
-        const messages=conversation.messages
-        res.status(200).json(messages)
+
+        const conversation = await Conversation.findOne({
+            participants: { $all: [senderId, userToChatId] },
+        }).populate("messages");
+
+        if (!conversation) {
+            return res.status(200).json({ success: true, messages: [] });
+        }
+
+
+        const messages = conversation.messages;
+        res.status(200).json({ success: true, messages });
+        console.log(messages)
     } catch (error) {
-        
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
-}
+};

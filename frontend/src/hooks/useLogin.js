@@ -17,6 +17,7 @@ const useLogin = () => {
             if (data.success) {
                 localStorage.setItem('token', JSON.stringify(data.token));
                 setAuthUser(data);
+                localStorage.setItem("userId", data.id);
             } else {
                 // Show backend error message in toast
                 toast.error(data.message || "An error occurred");

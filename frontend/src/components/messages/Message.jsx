@@ -1,21 +1,18 @@
-import React from 'react'
+import { useAuthContext } from "../../context/AuthContext";
 
-const Message = () => {
+export const Message = ({ message }) => {
+  const { authUser,authUserId } = useAuthContext(); // Logged-in user's data
+  
+  console.log(message.senderId); // Verify the prop
+  console.log(authUserId);
+
+  const isSentByUser = message.senderId === authUserId;
+
   return (
-    <div className='chat chat-end'>
-        <div className='chat-image avatar'>
-            <div className='w-10 rounded-full'>
-                <img src="" alt="" />
-            </div>
-        </div>
-        <div className={`chat-bubble text-white bg-blue-500`}>
-            Hi! What`s up?
-
-        </div>
-      
+    <div className={`chat ${isSentByUser ? "chat-end" : "chat-start"}`}>
+      <div className={`chat-bubble ${isSentByUser ? "bg-blue-500" : "bg-gray-300"}`}>
+        {message.message}
+      </div>
     </div>
-  )
-}
-
-export default Message 
-
+  );
+};
