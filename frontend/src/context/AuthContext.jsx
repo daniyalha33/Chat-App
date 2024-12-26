@@ -7,8 +7,9 @@ export const useAuthContext=()=>{
 export const AuthProvider=({children})=>{
     const [authUser,setAuthUser]=useState(JSON.parse(localStorage.getItem('token'))|| null)
     const [authUserId,setAuthUserId]=useState(localStorage.getItem('userId'))
+    const [chatUser,setChatUser]=useState(localStorage.getItem('chat-user'))
     
-    return <AuthContext.Provider value={{authUser,setAuthUser,authUserId}}>
+    return <AuthContext.Provider value={{authUser,setAuthUser,authUserId,chatUser}}>
         {children}
     </AuthContext.Provider>
 }

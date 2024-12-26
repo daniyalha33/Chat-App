@@ -6,11 +6,16 @@ import messageRoutes from "./routes/messageRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
+import { server ,app} from "./socket/socket.js";
+import cloudinaryConnect from "./config/cloudinary.js";
+
 
 // Initialize dotenv
 dotenv.config();
 
-const app = express();
+cloudinaryConnect();
+
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -46,7 +51,7 @@ app.get("/", (req, res) => {
 });
 
 // Start server and connect to the database
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
     try {
         await connectDb();
         console.log(`Server is running on port ${PORT}`);

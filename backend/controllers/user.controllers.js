@@ -1,11 +1,12 @@
 import User from "../models/users.models.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
-
+import { v2 as cloudinary } from "cloudinary";
 export const signup = async (req, res) => {
     try {
         console.log(req.body);
         const { fullName, email, password, confirmPassword, gender, username } = req.body;
+        const imageFile = req.file; // Multer attaches this to req.file
 
         // Validate required fields
         if (!fullName || !email || !password || !confirmPassword || !gender || !username) {
@@ -43,10 +44,14 @@ export const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Set profile picture based on gender
-        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
-        const profilePic = gender === "male" ? boyProfilePic : girlProfilePic;
+        // Upload the profile picture to Cloudinary
+        let imageUrl;
+        if (imageFile) {
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
+            imageUrl = imageUpload.secure_url;
+        } else {
+            return res.status(400).json({ success: false, message: "Image file is required" });
+        }
 
         // Create the new user
         const newUser = new User({
@@ -55,27 +60,32 @@ export const signup = async (req, res) => {
             username,
             gender,
             password: hashedPassword,
-            profilePic,
+            profilePic: imageUrl,
         });
-        
 
         // Save the user to the database
         await newUser.save();
-        if(!newUser){
-            return res.status(400).json({message:"database issue"})
+        if (!newUser) {
+            return res.status(400).json({ message: "Database issue" });
         }
 
         // Optionally generate a token and set a cookie
-        const token=generateTokenAndSetCookie(newUser._id);
+        const token = generateTokenAndSetCookie(newUser._id);
 
         // Send success response
-        res.status(201).json({success:true,token,id:newUser._id,fullName:newUser.fullName,username:newUser.username,profilePic:newUser.profilePic});
+        res.status(201).json({
+            success: true,
+            token,
+            id: newUser._id,
+            fullName: newUser.fullName,
+            username: newUser.username,
+            profilePic: newUser.profilePic,
+        });
     } catch (error) {
         console.error("Error during signup:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
